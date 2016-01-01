@@ -14,7 +14,7 @@ namespace KerbalObjectInspector
         public Inspector(int id, Rect hierarchyRect)
         {
             inspectorID = id;
-            inspectorRect = new Rect(hierarchyRect.x + hierarchyRect.width, hierarchyRect.y, 500f, 1000f);
+            inspectorRect = new Rect(hierarchyRect.x + hierarchyRect.width, hierarchyRect.y, 500f, Screen.height - 50);
             inspectorScroll = Vector2.zero;
         }
 

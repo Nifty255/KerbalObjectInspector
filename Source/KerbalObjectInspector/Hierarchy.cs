@@ -51,16 +51,42 @@ namespace KerbalObjectInspector
         private Inspector inspector = null;
 
         /// <summary>
+        /// The enable/disable button object in the top right
+        /// </summary>
+        ApplicationLauncherButton appButton;
+        /// <summary>
+        /// The enable/disable button object in the top right
+        /// </summary>
+        bool WindowVisible = false;
+
+        /// <summary>
         /// Called when this MonoBehaviour starts.
         /// </summary>
         void Start()
         {
+            CreateButtonIcon();
             // Instantiate the selection chain.
             selectionChain = new List<Transform>();
             // Create the initial window bounds.
-            hierarchyRect = new Rect(50f, 50f, 500f, 1000f);
+            hierarchyRect = new Rect(50f, 50f, 500f, Screen.height - 50);
             // Create the initial scroll position.
             hierarchyScroll = Vector2.zero;
+        }
+
+        private void CreateButtonIcon()
+        {
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+                return; // This causes the button to remain in place and ends up looking weird.
+            appButton = ApplicationLauncher.Instance.AddModApplication(
+                () => WindowVisible = true,
+                () => WindowVisible = false,
+                null,
+                null,
+                null,
+                null,
+                ApplicationLauncher.AppScenes.ALWAYS,
+                GameDatabase.Instance.GetTexture("KerbalObjectInspector/Textures/appButton", false)
+                );
         }
 
         /// <summary>
@@ -91,6 +117,8 @@ namespace KerbalObjectInspector
         void OnGUI()
         {
             // Draw the Hierarchy window.
+            if (!WindowVisible)
+                return;
             hierarchyRect = GUI.Window(GetInstanceID(), hierarchyRect, HierarchyWindow, "Hierarchy", HighLogic.Skin.window);
 
             // If there is something in the selection chain,
@@ -232,6 +260,7 @@ namespace KerbalObjectInspector
 
         void OnDestroy()
         {
+            ApplicationLauncher.Instance.RemoveModApplication(appButton);
             OnSelectionAboutToChange();
         }
     }
